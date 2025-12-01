@@ -3,12 +3,16 @@ package com.nmg20.jaix.model.track;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "track")
 public class Track {
 	
 	@Id
@@ -19,11 +23,10 @@ public class Track {
 	private String album;
 	private LocalDateTime releaseDate;
 	private float duration;
-	
-	@Embedded
 	private String route;
 	
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "info_id")
 	private TrackInfo info;
 	
 	public Track() {
