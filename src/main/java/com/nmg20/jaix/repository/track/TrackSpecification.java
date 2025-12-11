@@ -6,6 +6,9 @@ import com.nmg20.jaix.model.track.Track;
 
 public class TrackSpecification {
 
+	private TrackSpecification() {
+	}
+	
 	public static Specification<Track> hasTitle(String title) {
 		return (root, query, cb) -> 
 			title == null ? null : 

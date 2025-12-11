@@ -18,11 +18,11 @@ public class Track {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+	private String title;
 	private String artist;
 	private String album;
 	private LocalDateTime releaseDate;
-	private float duration;
+	private Double duration;
 	private String route;
 	
 	@OneToOne(cascade = CascadeType.ALL)
@@ -34,7 +34,7 @@ public class Track {
 	
 	public Track(Builder builder) {
 		this.id = builder.id;
-		this.name = builder.name;
+		this.title = builder.title;
 		this.artist = builder.artist;
 		this.album = builder.album;
 		this.releaseDate = builder.releaseDate;
@@ -51,12 +51,12 @@ public class Track {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getArtist() {
@@ -83,11 +83,11 @@ public class Track {
 		this.releaseDate = releaseDate;
 	}
 
-	public float getDuration() {
+	public Double getDuration() {
 		return duration;
 	}
 
-	public void setDuration(float duration) {
+	public void setDuration(Double duration) {
 		this.duration = duration;
 	}
 
@@ -109,20 +109,20 @@ public class Track {
 	
 	public class Builder {
 		private Long id;
-		private String name;
+		private String title;
 		private String artist;
 		private String album;
 		private String route;
 		private LocalDateTime releaseDate;
-		private float duration;
+		private Double duration;
 		private TrackInfo info;
 		
 		public Long getId() {
 			return id;
 		}
 
-		public String getName() {
-			return name;
+		public String getTitle() {
+			return title;
 		}
 
 		public String getArtist() {
@@ -141,7 +141,7 @@ public class Track {
 			return releaseDate;
 		}
 
-		public float getDuration() {
+		public Double getDuration() {
 			return duration;
 		}
 
@@ -154,8 +154,8 @@ public class Track {
 			return this;
 		}
 		
-		public Builder name(String name) {
-			this.name = name;
+		public Builder title(String title) {
+			this.title = title;
 			return this;
 		}
 		
@@ -179,7 +179,7 @@ public class Track {
 			return this;
 		}
 		
-		public Builder duration(float duration) {
+		public Builder duration(Double duration) {
 			this.duration = duration;
 			return this;
 		}
@@ -192,7 +192,7 @@ public class Track {
 		public Track build() {
 			Track track = new Track();
 			track.setId(getId());
-			track.setName(getName());
+			track.setTitle(getTitle());
 			track.setArtist(getArtist());
 			track.setAlbum(getAlbum());
 			track.setRoute(getRoute());
