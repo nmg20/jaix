@@ -4,13 +4,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.nmg20.jaix.model.track.Track;
 
+@Component
 public class LocalPlaylistSource implements PlaylistSource {
 
 	@Override
 	public boolean supportsInput(String input) {
-		return Files.isDirectory(Path.of(input));
+		try {
+			return Files.isDirectory(Path.of(input));
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override

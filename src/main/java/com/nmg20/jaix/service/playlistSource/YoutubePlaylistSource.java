@@ -2,9 +2,12 @@ package com.nmg20.jaix.service.playlistSource;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.nmg20.jaix.model.track.Track;
 import com.nmg20.jaix.provider.youtube.YoutubeProvider;
 
+@Component
 public class YoutubePlaylistSource implements PlaylistSource {
 
 	private final YoutubeProvider youtubeProvider;
@@ -15,7 +18,11 @@ public class YoutubePlaylistSource implements PlaylistSource {
 	
 	@Override
 	public boolean supportsInput(String input) {
-		return input.startsWith("http") && input.contains("youtube.com");
+		try {
+			return input.startsWith("http") && input.contains("youtube.com");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
