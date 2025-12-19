@@ -1,0 +1,113 @@
+Resumen completo del proyecto JAIX
+
+---
+
+**Proyecto JAIX - Sistema de gestión de tracks y playlists con análisis de audio**
+
+**Objetivo:**
+Construir un sistema capaz de recolectar, almacenar y procesar información de tracks y playlists desde URLs de distintas plataformas, con capacidades de análisis de audio y metadata, y con un backend en Java/Spring Boot y componentes auxiliares en Python para procesamiento multimedia.
+
+---
+
+**Tecnologías y librerías utilizadas:**
+
+* **Java 20+ con Spring Boot 3.2.5**: Backend principal.
+* **JPA/Hibernate**: Persistencia de datos.
+* **H2 Database** (temporal) y recomendación de PostgreSQL/MySQL para producción.
+* **Flask/Python**: Módulo auxiliar para integración con yt-dlp o librerías de análisis de audio.
+* **Python yt-dlp**: Descarga y parsing de URLs de playlists y tracks.
+* **SQLite** (opcional) para prototipos sencillos.
+* **FastAPI** (posible alternativa) para microservicios de Python.
+
+---
+
+**Estructura y diseño del sistema:**
+
+1. **Entidades principales:**
+
+* `Track`: Información básica del track (nombre, artista, álbum, duración, fecha de lanzamiento, ruta de almacenamiento local, relación con `TrackInfo`).
+* `TrackInfo`: Información derivada de análisis más profundo (key, BPM, etc.).
+* `Playlist`: Conjunto de tracks obtenidos desde una URL.
+
+2. **Servicios:**
+
+* `TrackService`: Operaciones CRUD y de consulta sobre tracks.
+* `TrackServiceImpl`: Implementación concreta con inyección de `TrackRepository`.
+* `TrackInfoService`: Manejo de análisis y datos profundos de tracks.
+* Interfaces separadas permiten evolucionar la lógica de análisis sin afectar los tracks básicos.
+
+3. **Repositorios:**
+
+* `TrackRepository`: Extiende `JpaRepository<Track, Long>`.
+* `TrackInfoRepository`: Para TrackInfo.
+
+4. **Controladores (Endpoints):**
+
+* Endpoint principal para procesar URLs de playlists:
+
+  * `/parsePlaylist?url=` → devuelve lista de tracks.
+  * `/downloadTrack?trackId=` → descarga track seleccionado.
+* No se gestionan tracks individualmente mediante CRUD tradicional en el frontend, sino como parte de la interacción con playlists y análisis.
+
+5. **Módulo Python (yt-dlp wrapper):**
+
+* Servicio independiente para parsing y descarga de URLs.
+* Expone endpoints REST o RPC para que el backend en Java pueda interactuar.
+* Retorna información de tracks (nombre, artista, URL, duración, etc.) sin procesar metadata de audio.
+
+6. **Flujo de datos:**
+
+```
+Usuario --> Endpoint PlaylistController /parsePlaylist --> TrackService/TrackRepository --> Track entities
+Usuario --> Selecciona tracks --> Endpoint /downloadTrack --> Python yt-dlp Service --> Descarga local
+TrackService --> TrackInfoService (si análisis profundo) --> TrackInfo entities
+Persistencia --> Base de datos relacional (H2/SQLite/PostgreSQL)
+```
+
+7. **Persistencia y bases de datos:**
+
+* Inicialmente H2 en memoria para prototipado.
+* PostgreSQL/MySQL para producción, con configuración de `spring.datasource.url`, `username` y `password`.
+* Evitar locks y conflictos usando pools de conexiones y server mode en H2.
+
+8. **Ejemplo de TrackServiceImpl:**
+
+```java
+@Service
+public class TrackServiceImpl implements TrackService {
+
+    private final TrackRepository trackRepository;
+
+    public TrackServiceImpl(TrackRepository trackRepository) {
+        this.trackRepository = trackRepository;
+    }
+
+    @Override
+    public Track saveTrack(Track track) {
+        return trackRepository.save(track);
+    }
+
+    @Override
+    public Optional<Track> getTrack(Long id) {
+        return trackRepository.findById(id);
+    }
+
+    @Override
+    public List<Track> getAllTracks() {
+        return trackRepository.findAll();
+    }
+}
+```
+
+9. **Próximos pasos en desarrollo:**
+
+* Integrar servicio Python yt-dlp y exponerlo como microservicio.
+* Endpoint de parsing de playlists que devuelva tracks y metadatos básicos.
+* Endpoint de descarga de tracks seleccionados.
+* Desacoplar análisis profundo de TrackInfo, permitiendo análisis asincrónico y almacenamiento separado.
+* Migrar a base de datos persistente (PostgreSQL) para producción.
+* Optimizar servicios y repositorios según necesidades (caching, consultas complejas).
+
+---
+
+Este resumen incluye todas las piezas mínimas necesarias para comprender y retomar el proyecto.

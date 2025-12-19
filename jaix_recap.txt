@@ -1,0 +1,108 @@
+Recap de Arquitectura y Módulos de JAIX
+
+1. Arquitectura general de JAIX
+
+El proyecto JAIX se compone de tres módulos principales:
+
+------------------------------------------------------------------------
+
+A. Módulo JAIX (Java — Core + API + BD + Indexado)
+
+Responsabilidades: - Orquestador del sistema. - Expone la API REST
+(Spring Boot). - Gestiona SQLite. - Gestiona Lucene. - Lógica de
+negocio: - deduplicación - detección de equivalencias - sincronización
+de bibliotecas - comprobación de si un track ya está descargado
+
+Contiene: - Modelo central Track - Servicios: - TrackService -
+TrackSimilarityService - TrackIndexService (Lucene) - TrackRepository
+(SQLite) - YoutubeClient (comunicación con PAIX) - Controladores REST
+
+------------------------------------------------------------------------
+
+B. Módulo PAIX (Python — yt-dlp wrapper)
+
+Responsabilidades: - Extraer información desde YouTube: - playlists -
+vídeos - metadatos (duración, artista, álbum) - Descargar audio
+opcionalmente. - Normalizar la información y devolver DTO compatibles
+con Track.
+
+PAIX solo ingiere datos, sin guardar nada ni aplicar lógica.
+
+------------------------------------------------------------------------
+
+C. Módulo JAIX-Frontend (React, Vite)
+
+Responsabilidades: - UI para visualizar: - tracks procesados -
+importaciones - resultados de similitud - estado de descargas - Solo
+consume la API del módulo JAIX.
+
+------------------------------------------------------------------------
+
+2. Modelo unificado: Track
+
+Una única clase para representar cualquier origen: local, YouTube, PAIX
+o frontend.
+
+Campos recomendados:
+
+id
+source
+title
+artist
+album
+durationSeconds
+platformId
+localPath
+normalizedTitle
+normalizedArtist
+
+------------------------------------------------------------------------
+
+3. Indexar Tracks con Lucene
+
+Sí, es muy necesario. Permite:
+
+-   deduplicación
+-   equivalencias entre plataformas/locales
+-   búsquedas textuales
+-   evitar descargas repetidas
+
+Lucene trabaja con Documents, por lo que se genera uno por track.
+
+------------------------------------------------------------------------
+
+4. Flujo general del sistema
+
+1.  Importar playlist desde frontend → JAIX → PAIX → normalización →
+    SQLite + Lucene → respuesta.
+2.  Importar tracks locales → normalización → indexado.
+3.  Comprobar duplicados → Lucene similarity.
+4.  Deduplicar biblioteca.
+
+------------------------------------------------------------------------
+
+5. Relación entre módulos
+
+JAIX: API + BD + lógica
+PAIX: ingestión YouTube
+Frontend: UI
+
+------------------------------------------------------------------------
+
+6. Plan de desarrollo recomendado
+
+1.  Definir modelo Track final.
+2.  Implementar TrackRepository (SQLite).
+3.  Implementar Lucene Indexer.
+4.  Crear TrackSimilarityService.
+5.  Conectar PAIX → JAIX.
+6.  Exponer API REST.
+7.  Integrar frontend.
+
+------------------------------------------------------------------------
+
+7. Módulos del proyecto
+
+jaix (Java): API + BD + Lucene + deduplicación
+aix-yt-dlp (PAIX): ingestión desde YouTube
+jaix-frontend: UI ligera
