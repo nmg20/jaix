@@ -54,7 +54,7 @@ public class YoutubeClient {
 	public String extractPlaylistId(String playlistUrl) {
 	    try {
 	        URI uri = new URI(playlistUrl);
-	        String query = uri.getQuery(); // v=W-UepwIyHfc&list=PLR-pSqh8ddm3FQM_eMiCfXqTwDK8qLRMt
+	        String query = uri.getQuery();
 	        for (String param : query.split("&")) {
 	            String[] pair = param.split("=");
 	            if (pair.length == 2 && pair[0].equals("list")) {
@@ -66,7 +66,5 @@ public class YoutubeClient {
 	    }
 	    return null;
 	}
-
-
 
 }
