@@ -8,6 +8,7 @@ class JaixApplicationTests {
 
 	@Test
 	void contextLoads() {
+		throw new UnsupportedOperationException();
 	}
 
 }

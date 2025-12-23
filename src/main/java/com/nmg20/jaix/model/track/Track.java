@@ -2,13 +2,10 @@ package com.nmg20.jaix.model.track;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,9 +22,9 @@ public class Track {
 	private Double duration;
 	private String route;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "info_id")
-	private TrackInfo info;
+//	@OneToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "info_id")
+//	private TrackInfo info;
 	
 	public Track() {
 	}
@@ -40,7 +37,7 @@ public class Track {
 		this.releaseDate = builder.releaseDate;
 		this.duration = builder.duration;
 		this.route = builder.route;
-		this.info = builder.info;
+//		this.info = builder.info;
 	}
 
 	public Long getId() {
@@ -99,15 +96,15 @@ public class Track {
 		this.route = route;
 	}
 
-	public TrackInfo getInfo() {
-		return info;
-	}
-
-	public void setInfo(TrackInfo info) {
-		this.info = info;
-	}
+//	public TrackInfo getInfo() {
+//		return info;
+//	}
+//
+//	public void setInfo(TrackInfo info) {
+//		this.info = info;
+//	}
 	
-	public class Builder {
+	public static class Builder {
 		private Long id;
 		private String title;
 		private String artist;
@@ -196,7 +193,7 @@ public class Track {
 			track.setArtist(getArtist());
 			track.setAlbum(getAlbum());
 			track.setRoute(getRoute());
-			track.setInfo(getInfo());
+//			track.setInfo(getInfo());
 			return track;
 		}
 		
